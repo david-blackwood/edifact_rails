@@ -1,11 +1,11 @@
 module EdifactRails
-  def self.hi
-    puts 'Hello World!'
+  def self.parse(string)
+    "I'm gonna PAAAAAARSE #{string}"
   end
 
-  def read
-  end
-
-  def read_io
+  def self.parse_file(file_path)
+    File.foreach(file_path) do |line|
+      puts line
+    end
   end
 end

@@ -1,8 +1,8 @@
 # EdifactRails
 
-This gem allows you to read in EDIFACT input - strings or files - and convert them into a ruby array structure for additional validation and processing.
+This gem allows you to parse EDIFACT input - strings or files - and convert them into a ruby array structure for additional validation and processing.
 
-It does not handle validation.
+It does not handle validation itself.
 
 ## Getting started 
 
