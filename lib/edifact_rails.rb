@@ -1,11 +1,15 @@
+# frozen_string_literal: true
+
+require "edifact_rails/parser"
+
 module EdifactRails
   def self.parse(string)
-    "I'm gonna PAAAAAARSE #{string}"
+    parser = EdifactRails::Parser.new
+    parser.parse string
   end
 
   def self.parse_file(file_path)
-    File.foreach(file_path) do |line|
-      puts line
-    end
+    parser = EdifactRails::Parser.new
+    parser.parse_file file_path
   end
 end

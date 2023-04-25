@@ -3,5 +3,14 @@ require:
  - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 3.2
+  TargetRubyVersion: 3.1
   NewCops: enable
+
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes

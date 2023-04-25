@@ -1,0 +1,1 @@
+rspec spec/edifact_rails_spec.rb
