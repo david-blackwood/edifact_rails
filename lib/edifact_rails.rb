@@ -9,7 +9,6 @@ module EdifactRails
   end
 
   def self.parse_file(file_path)
-    parser = EdifactRails::Parser.new
-    parser.parse_file file_path
+    parse(File.read(file_path).split("\n").join)
   end
 end
