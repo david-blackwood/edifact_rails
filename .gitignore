@@ -13,3 +13,4 @@ pkg/*
 spec/dummy/tmp/*
 spec/dummy/log/*.log
 examples.txt
+.byebug_history

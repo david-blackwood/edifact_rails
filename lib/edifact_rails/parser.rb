@@ -12,7 +12,7 @@ module EdifactRails
     # Treat the input a little, split the input into segments, parse them
     def parse(input)
       # Trim newlines
-      input = input.gsub(/\s*\n\s*/, '')
+      input = input.gsub(/\s*\n\s*/, "")
 
       # Prepare regex
       esc_rx = Regexp.quote(EdifactRails::Parser::ESCAPE_CHARACTER)
