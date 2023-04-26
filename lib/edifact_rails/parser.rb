@@ -1,5 +1,6 @@
 # frozen_string_literal: true
-require 'byebug'
+
+require "byebug"
 
 module EdifactRails
   class Parser
@@ -26,7 +27,7 @@ module EdifactRails
       # Add a space between these even number of escapes, and the special character
       # This means the regex logic for #splitting on special characters is now consistent, since we now know that if there
       # is an escape character before the special character, it should definately be respected
-      # We have to do this because we can't negative lookbehind for 'an even number of escape characters' since 
+      # We have to do this because we can't negative lookbehind for 'an even number of escape characters' since
       # lookbehinds have to be fixed length.
       # The added space, which is now at the boundry of a component,
       # will get cut by the #strip! in parse_component eventually
@@ -50,8 +51,7 @@ module EdifactRails
         /(?<!#{Regexp.quote(EdifactRails::Parser::ESCAPE_CHARACTER)})#{Regexp.quote(EdifactRails::Parser::SEGMENT_SEPARATOR)}/
       )
 
-
-      segments.reject! { |s| s[0..2] == 'UNA' }
+      segments.reject! { |s| s[0..2] == "UNA" }
 
       segments.each do |segment|
         parsed_segments.push parse_segment(segment)
@@ -68,7 +68,7 @@ module EdifactRails
       )
 
       parsed_segment = []
-      
+
       # The first element is the tag, pop it off
       parsed_segment.push(data_elements.shift) if data_elements.any?
 
@@ -95,29 +95,32 @@ module EdifactRails
       ].join
 
       components.each do |component|
-        # Remove surrounding whitespace
-        component.strip!
-
-        # If the component has escaped characters in it, remove the escape character and return the character as is
-        # "?+" -> "+", "??" -> "?"
-        component.gsub!(
-          /#{Regexp.quote(EdifactRails::Parser::ESCAPE_CHARACTER)}([#{Regexp.quote(all_special_characters)}])/,
-          '\1'
-        )
-
-        # Convert empty strings to nils
-        component = nil if component.empty?
-
-        # Convert the component to integer if it is one
-        # "1" -> 1
-        # "-123" -> -123
-        # "0350" -> "0350"
-        component = component.to_i if component.to_i.to_s == component
-
-        parsed_element.push component
+        parsed_element.push treat_component(component)
       end
 
       parsed_element
+    end
+
+    # Strip, remove escape characters, convert to nil where needed, convert to integer where needed
+    def treat_component(component)
+      # Remove surrounding whitespace
+      component.strip!
+
+      # If the component has escaped characters in it, remove the escape character and return the character as is
+      # "?+" -> "+", "??" -> "?"
+      component.gsub!(
+        /#{Regexp.quote(EdifactRails::Parser::ESCAPE_CHARACTER)}([#{Regexp.quote(all_special_characters)}])/,
+        '\1'
+      )
+
+      # Convert empty strings to nils
+      component = nil if component.empty?
+
+      # Convert the component to integer if it is one
+      # "1" -> 1
+      # "-123" -> -123
+      # "0350" -> "0350"
+      component = component.to_i if component.to_i.to_s == component
     end
   end
 end
