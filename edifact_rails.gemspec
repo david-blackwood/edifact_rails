@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
   spec.version = EdifactRails::VERSION
   spec.authors = "David Blackwood"
   spec.email = "david.blackwood.94@gmail.com"
-  spec.summary = "Converts an Edifact file into a ruby array structure"
+  spec.summary = "Ruby gem that parses an EDIFACT input into a ruby array structure"
   spec.description = "This gem allows you to pass in a EDIFACT string or file, and returns an array structure, " \
                      "to enable additional processing and validation"
   spec.homepage = "https://github.com/david-blackwood/edifact_rails"
@@ -22,8 +22,7 @@ Gem::Specification.new do |spec|
     "lib/**/*.rake",
     "lokalise_rails.gemspec",
     ".github/*.md",
-    "Gemfile",
-    "Rakefile"
+    "Gemfile"
   ]
   spec.extra_rdoc_files = ["README.md"]
 
