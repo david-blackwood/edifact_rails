@@ -8,7 +8,11 @@ This gem is heavily influenced by and attempts to output the same results as [ed
 
 ## Requirements
 
-This gem requires Ruby 3.1+
+This gem has been tested on the following ruby versions:
+* 2.7.8
+* 3.0.6
+* 3.1.2
+* 3.2.2
 
 ## Getting started 
 
@@ -24,7 +28,11 @@ gem 'edifact_rails'
 
 ## Usage
 
-You can pass either the path to your EDIFACT file, or a document as a string:
+```ruby
+require 'edifact_rails'
+```
+
+Then, you can pass either the path to your EDIFACT file, or a document as a string:
 
 ```ruby
 ruby_array = EdifactRails.parse_file("your/file/path")

@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/david-blackwood/edifact_rails"
   spec.platform = Gem::Platform::RUBY
   spec.license = "MIT"
-  spec.required_ruby_version = ">= 3.1.0"
+  spec.required_ruby_version = ">= 2.7.0"
   spec.files = Dir[
     "README.md",
     "LICENSE",
@@ -26,10 +26,14 @@ Gem::Specification.new do |spec|
   ]
   spec.extra_rdoc_files = ["README.md"]
 
+  # Debugging
   spec.add_development_dependency "byebug", "~> 11.1"
+
+  # Rubocop
   spec.add_development_dependency "rubocop", "~> 1.50"
   spec.add_development_dependency "rubocop-performance", "~> 1.17"
   spec.add_development_dependency "rubocop-rspec", "~> 2.20"
+
   # Testing
   spec.add_development_dependency "rake", "~> 13.0"
   spec.add_development_dependency "rspec", "~> 3.6"
