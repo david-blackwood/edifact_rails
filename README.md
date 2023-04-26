@@ -22,7 +22,7 @@ gem install edifact_rails
 
 Or, in your `Gemfile`:
 
-```
+```ruby
 gem 'edifact_rails'
 ```
 
