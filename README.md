@@ -20,7 +20,7 @@ This gem has been tested on the following ruby versions:
 In your `Gemfile`:
 
 ```ruby
-gem 'edifact_rails', '~> 1.0'
+gem 'edifact_rails', '~> 1.1'
 ```
 
 Otherwise:
