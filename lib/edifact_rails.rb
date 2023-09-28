@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "edifact_rails/parser"
+require "edifact_rails/serializer"
 
 module EdifactRails
   DEFAULT_SPECIAL_CHARACTERS = {
@@ -23,5 +24,10 @@ module EdifactRails
   def self.una_special_characters(string = '')
     parser = EdifactRails::Parser.new
     parser.una_special_characters(string)
+  end
+
+  def self.serialize(array, with_service: true)
+    serializer = EdifactRails::Serializer.new
+    serializer.serialize array, with_service: with_service
   end
 end
