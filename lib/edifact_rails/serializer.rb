@@ -2,14 +2,13 @@
 
 module EdifactRails
   class Serializer
-    # Treat the input a little, split the input string into segments, parse them
+    # with_service is used to force the service segment (UNA) at the beginning of the message
     def serialize(segments, with_service:)
-      # Add the UNA segment
-
       # Serialize and join the segments
       output = segments.map { |segment| serialize_segment(segment) }
                        .join(EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator])
 
+      # Add the UNA segment
       output.insert(0, "UNA:+.? '") unless segments.first.first == "UNA" || !with_service
       output + EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
     end

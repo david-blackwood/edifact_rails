@@ -222,6 +222,19 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
+  it "serializes multiple lines adding the service segment" do
+    result = described_class.serialize(
+      [
+        ["LIN", [1], [1], ["0764569104", "IB"]],
+        ["QTY", [1, 25]]
+      ],
+      with_service: true
+    )
+    expected = "UNA:+.? 'LIN+1+1+0764569104:IB'QTY+1:25'"
+
+    expect(result).to eq(expected)
+  end
+
   it "serializes with escaped characters" do
     result = described_class.serialize(
       [
