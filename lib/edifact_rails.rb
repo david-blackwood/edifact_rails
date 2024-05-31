@@ -19,8 +19,8 @@ module EdifactRails
     parse(File.read(file_path).split("\n").join)
   end
 
-  def self.edifact_special_characters(string)
+  def self.una_special_characters(string)
     parser = EdifactRails::Parser.new
-    parser.edifact_special_characters(string)
+    parser.una_special_characters(string)
   end
 end

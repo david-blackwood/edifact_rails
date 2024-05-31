@@ -15,7 +15,7 @@ This gem has been tested on the following ruby versions:
 * 3.1.2
 * 3.2.2
 
-## Getting started 
+## Getting started
 
 In your `Gemfile`:
 
@@ -45,6 +45,11 @@ ruby_array = EdifactRails.parse_file("your/file/path")
 
 ```ruby
 ruby_array = EdifactRails.parse("LIN+1+1+0764569104:IB'QTY+1:25'")
+```
+
+You can pull the special characters from the UNA segment (or the defaults if no UNA segment is present):
+```ruby
+una_special_characters = EdifactRails.una_special_characters(your_string_input)
 ```
 
 ## Output

@@ -33,9 +33,8 @@ module EdifactRails
     end
 
     # Given an input string, return the special characters as defined by the UNA segment
-    # If no UNA segment is present, return the default special characters
-    # as defined in EdifactRails::DEFAULT_SPECIAL_CHARACTERS
-    def edifact_special_characters(string)
+    # If no UNA segment is present, returns the default special characters
+    def una_special_characters(string)
       detect_special_characters(string)
 
       {
