@@ -2,13 +2,6 @@
 
 module EdifactRails
   class Parser
-    DEFAULT_SPECIAL_CHARACTERS = {
-      component_data_element_seperator: ":",
-      data_element_seperator: "+",
-      escape_character: "?",
-      segment_seperator: "'"
-    }.freeze
-
     def initialize
       # Set default separators
       # They can be overridden by the UNA segment in #detect_special_characters
@@ -43,10 +36,10 @@ module EdifactRails
 
     def set_special_characters(
       component_data_element_seperator =
-        EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
-      data_element_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:data_element_seperator],
-      escape_character = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:escape_character],
-      segment_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
+        EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
+      data_element_seperator = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:data_element_seperator],
+      escape_character = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:escape_character],
+      segment_seperator = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
     )
       # Set the special characters
       @component_data_element_seperator = component_data_element_seperator
