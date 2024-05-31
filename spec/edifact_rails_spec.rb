@@ -26,7 +26,7 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it "handles escaped characters" do
+  it "parses escaped characters" do
     result = described_class.parse("LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156")
     expected = [
       ["LIN", ["+:'?", 1], ["A Giant's tale:", "Does One + Two = Trouble??"], [156]]
@@ -34,7 +34,7 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it "handles empty segments" do
+  it "parses empty segments" do
     result = described_class.parse("QTY+1''QTY+2")
     expected = [
       ["QTY", [1]],
@@ -45,7 +45,7 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it "handles empty data elements" do
+  it "parses empty data elements" do
     result = described_class.parse("FTX+AFM+1++Java Server Programming'")
     expected = [
       ["FTX", ["AFM"], [1], [], ["Java Server Programming"]]
@@ -54,7 +54,7 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it "handles empty data components" do
+  it "parses empty data components" do
     result = described_class.parse("PDI++C:3+Y::3+F::1+A'")
     expected = [
       ["PDI", [], ["C", 3], ["Y", nil, 3], ["F", nil, 1], ["A"]]
