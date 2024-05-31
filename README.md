@@ -47,9 +47,16 @@ ruby_array = EdifactRails.parse_file("your/file/path")
 ruby_array = EdifactRails.parse("LIN+1+1+0764569104:IB'QTY+1:25'")
 ```
 
-You can pull the special characters from the UNA segment (or the defaults if no UNA segment is present):
+You can pull just the special characters from the UNA segment (or the defaults if no UNA segment is present):
 ```ruby
 una_special_characters = EdifactRails.una_special_characters(your_string_input)
+# una_special_characters =>
+{
+  component_data_element_seperator: ":",
+  data_element_seperator: "+",
+  escape_character: "?",
+  segment_seperator: "'"
+}
 ```
 
 ## Output
