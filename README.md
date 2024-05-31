@@ -4,7 +4,7 @@ This gem parses EDIFACT or TRADACOMS input, and converts it into a ruby array st
 
 It does not handle validation itself.
 
-This gem is heavily inspired by and attempts to output similar results as [edifact_parser](https://github.com/pvdvreede/edifact_parser), credits to [pvdvreede](https://github.com/pvdvreede)
+This gem is heavily inspired by and attempts to output similar results as [edifact_parser](https://github.com/pvdvreede/edifact_parser)
 
 ## Requirements
 
