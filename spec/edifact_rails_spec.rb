@@ -104,7 +104,7 @@ RSpec.describe EdifactRails do
       ["NAD", ["SU"], [4012345000094, nil, 9]],
       ["LIN", [1], [1], ["0764569104", "IB"]],
       ["QTY", [1, 25]],
-      ["FTX", ["AFM"], [1], [], ["XPath 2.0 Programmer's Reference"]],
+      ["FTX", ["AFM"], [1], [], ["Here's a string with some escaped special characters: !^\\~"]],
       ["LIN", [2], [1], ["0764569090", "IB"]],
       ["QTY", [1, 25]],
       ["FTX", ["AFM"], [1], [], ["XSLT 2.0 Programmer's Reference"]],
