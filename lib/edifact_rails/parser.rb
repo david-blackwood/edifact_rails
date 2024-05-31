@@ -32,6 +32,20 @@ module EdifactRails
       segments.map { |segment| parse_segment(segment) }
     end
 
+    # Given an input string, return the special characters as defined by the UNA segment
+    # If no UNA segment is present, return the default special characters
+    # as defined in EdifactRails::DEFAULT_SPECIAL_CHARACTERS
+    def edifact_special_characters(string)
+      detect_special_characters(string)
+
+      {
+        component_data_element_seperator: @component_data_element_seperator,
+        data_element_seperator: @data_element_seperator,
+        escape_character: @escape_character,
+        segment_seperator: @segment_seperator
+      }
+    end
+
     private
 
     def set_special_characters(

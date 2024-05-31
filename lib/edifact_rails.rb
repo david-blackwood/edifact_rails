@@ -12,10 +12,15 @@ module EdifactRails
 
   def self.parse(string)
     parser = EdifactRails::Parser.new
-    parser.parse string
+    parser.parse(string)
   end
 
   def self.parse_file(file_path)
     parse(File.read(file_path).split("\n").join)
+  end
+
+  def self.edifact_special_characters(string)
+    parser = EdifactRails::Parser.new
+    parser.edifact_special_characters(string)
   end
 end
