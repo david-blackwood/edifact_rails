@@ -2,21 +2,28 @@
 
 module EdifactRails
   class Parser
-    ESCAPE_CHARACTER = "?"
-    SEGMENT_SEPARATOR = "'"
-    DATA_ELEMENT_SEPARATOR = "+"
-    COMPONENT_DATA_ELEMENT_SEPARATOR = ":"
+    DEFAULT_SPECIAL_CHARACTERS = {
+      component_data_element_seperator: ":",
+      data_element_seperator: "+",
+      escape_character: "?",
+      segment_seperator: "'"
+    }.freeze
 
     def initialize
-      # Escape the special characters for use in regex later on
-      @escape_char_rx = Regexp.quote(EdifactRails::Parser::ESCAPE_CHARACTER)
-      @segment_separator_rx = Regexp.quote(EdifactRails::Parser::SEGMENT_SEPARATOR)
-      @data_element_separator_rx = Regexp.quote(EdifactRails::Parser::DATA_ELEMENT_SEPARATOR)
-      @component_data_element_separator_rx = Regexp.quote(EdifactRails::Parser::COMPONENT_DATA_ELEMENT_SEPARATOR)
+      # Set default separators
+      # They can be overridden by the UNA segment in #detect_special_characters
+      set_special_characters
     end
 
-    # Treat the input a little, split the input string into segments, parse them
+    # Treat the input, split the input string into segments, parse those segments
     def parse(string)
+      # Trim newlines and excess spaces around those newlines
+      string = string.gsub(/\s*\n\s*/, "")
+
+      # Check for UNA segment, update special characters if so
+      detect_special_characters(string)
+
+      # Does some funky regex maniulation to handle escaped special characters
       string = treat_input(string)
 
       # Split the input string into segments
@@ -25,7 +32,7 @@ module EdifactRails
       # Detect if the input is a tradacoms file
       @is_tradacoms = segments.map { |s| s[3] }.uniq == ["="]
 
-      # Drop the UNA segment, if present
+      # Drop the UNA segment, if present (we have already dealt with it in #detect_special_characters)
       segments.reject! { |s| s[0..2] == "UNA" }
 
       # Parse the segments
@@ -34,16 +41,51 @@ module EdifactRails
 
     private
 
-    def treat_input(string)
-      # Trim newlines and excess spaces around those newlines
-      string = string.gsub(/\s*\n\s*/, "")
+    def set_special_characters(
+      component_data_element_seperator =
+        EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
+      data_element_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:data_element_seperator],
+      escape_character = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:escape_character],
+      segment_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
+    )
+      # Set the special characters
+      @component_data_element_seperator = component_data_element_seperator
+      @data_element_seperator = data_element_seperator
+      @escape_character = escape_character
+      @segment_seperator = segment_seperator
 
+      # Escape the special characters for use in regex later on
+      @component_data_element_separator_rx = Regexp.quote(@component_data_element_seperator)
+      @data_element_separator_rx = Regexp.quote(@data_element_seperator)
+      @escape_char_rx = Regexp.quote(@escape_character)
+      @segment_separator_rx = Regexp.quote(@segment_seperator)
+    end
+
+    def detect_special_characters(string)
+      # UNA tags must be at the start of the input otherwise they are ignored
+      return unless string[0..2] == "UNA"
+
+      # UNA segments look like this:
+      #
+      # UNA:+.? '
+      #
+      # UNA followed by 6 special characters which are, in order:
+      # 1. Component data element separator
+      # 2. Data element separator
+      # 3. Decimal notation (must be . or ,)
+      # 4. Release character (aka escape character)
+      # 5. Reserved for future use, so always a space for now
+      # 6. Segment terminator
+      set_special_characters(string[3], string[4], string[6], string[8])
+    end
+
+    def treat_input(string)
       # Prepare regex
       other_specials_rx = Regexp.quote(
         [
-          EdifactRails::Parser::SEGMENT_SEPARATOR,
-          EdifactRails::Parser::DATA_ELEMENT_SEPARATOR,
-          EdifactRails::Parser::COMPONENT_DATA_ELEMENT_SEPARATOR
+          @segment_seperator,
+          @data_element_seperator,
+          @component_data_element_seperator
         ].join
       )
 
@@ -72,7 +114,7 @@ module EdifactRails
       # If the input is a tradacoms file, the segment tag will be proceeded by '=' instead of '+'
       # 'QTY=1+A:B' instead of 'QTY+1+A:B'
       # Fortunately, this is easily handled by simply changing these "="s into "+"s before the split
-      segment[3] = EdifactRails::Parser::DATA_ELEMENT_SEPARATOR if @is_tradacoms && segment.length >= 4
+      segment[3] = @data_element_seperator if @is_tradacoms && segment.length >= 4
 
       # Segments are made up of data elements
       data_elements = segment.split(/(?<!#{@escape_char_rx})#{@data_element_separator_rx}/)
@@ -99,16 +141,16 @@ module EdifactRails
       component.strip!
 
       # Prepare regex
-      all_special_characters = [
-        EdifactRails::Parser::SEGMENT_SEPARATOR,
-        EdifactRails::Parser::DATA_ELEMENT_SEPARATOR,
-        EdifactRails::Parser::COMPONENT_DATA_ELEMENT_SEPARATOR,
-        EdifactRails::Parser::ESCAPE_CHARACTER
+      all_special_characters_string = [
+        @segment_seperator,
+        @data_element_seperator,
+        @component_data_element_seperator,
+        @escape_character
       ].join
 
       # If the component has escaped characters in it, remove the escape character and return the character as is
       # "?+" -> "+", "??" -> "?"
-      component.gsub!(/#{@escape_char_rx}([#{Regexp.quote(all_special_characters)}])/, '\1')
+      component.gsub!(/#{@escape_char_rx}([#{Regexp.quote(all_special_characters_string)}])/, '\1')
 
       # Convert empty strings to nils
       component = nil if component.empty?
