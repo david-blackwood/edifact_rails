@@ -93,6 +93,36 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
+  it "parses a file with different special characters defined" do
+    result = described_class.parse_file("#{FILES_DIR}/seperate_lines_different_special_characters.edi")
+    expected = [
+      ["UNB", ["UNOA", 3], ["TESTPLACE", 1], ["DEP1", 1], [20051107, 1159], [6002]],
+      ["UNH", ["SSDD1"], ["ORDERS", "D", "03B", "UN", "EAN008"]],
+      ["BGM", [220], ["BKOD99"], [9]],
+      ["DTM", [137, 20051107, 102]],
+      ["NAD", ["BY"], [5412345000176, nil, 9]],
+      ["NAD", ["SU"], [4012345000094, nil, 9]],
+      ["LIN", [1], [1], ["0764569104", "IB"]],
+      ["QTY", [1, 25]],
+      ["FTX", ["AFM"], [1], [], ["XPath 2.0 Programmer's Reference"]],
+      ["LIN", [2], [1], ["0764569090", "IB"]],
+      ["QTY", [1, 25]],
+      ["FTX", ["AFM"], [1], [], ["XSLT 2.0 Programmer's Reference"]],
+      ["LIN", [3], [1], [1861004656, "IB"]],
+      ["QTY", [1, 16]],
+      ["FTX", ["AFM"], [1], [], ["Java Server Programming"]],
+      ["LIN", [4], [1], ["0596006756", "IB"]],
+      ["QTY", [1, 10]],
+      ["FTX", ["AFM"], [1], [], ["Enterprise Service Bus"]],
+      ["UNS", ["S"]],
+      ["CNT", [2, 4]],
+      ["UNT", [22], ["SSDD1"]],
+      ["UNZ", [1], [6002]]
+    ]
+
+    expect(result).to eq(expected)
+  end
+
   it 'parses a tradacoms file' do
     result = described_class.parse_file("#{FILES_DIR}/tradacoms.edi")
     expected = [
