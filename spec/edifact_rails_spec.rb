@@ -123,32 +123,36 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it 'parses a tradacoms file' do
+  it "parses a tradacoms file" do
     result = described_class.parse_file("#{FILES_DIR}/tradacoms.edi")
     expected = [
-      ['STX', ['ANA', 1], [5000169000001, 'DAVEY PLC'], [5060073022052, 'Blackwood Limited'], [230102, '050903'], [3800], [], ['ORDHDR']],
-      ['MHD', [1], ['ORDHDR', 9]],
-      ['TYP', ['0430'], ['NEW-ORDERS']],
-      ['SDT', [5060073022052, '005096'], ['BLACKWOOD LTD']],
-      ['CDT', [5000169000001, 'WINDRAKER LTD']],
-      ['FIL', [3800], [1], [230102]],
-      ['MTR', [14]],
-      ['MHD', [4], ['ORDERS', 9]],
-      ['CLO', [nil, 777, 'BLACKWOOD D']],
-      ['ORD', ['B1102300', nil, 230102], [], ['N']],
-      ['DIN', [230103], [], [], ['PM']],
-      ['OLD', [1], [nil, 5000169475119], [5000169847442], [nil, '047836'], [12], [68], [], [], [], ['WR TStem Broccoli Spears']],
-      ['DNB', [1], [1], [], [nil, nil, 128, 'KENYA/JOR/UK', 142, nil, 202, '060123']],
-      ['OLD', [2], [nil, 5000169073643], [5000169159491], [nil, '085482'], [16], [15], [], [], [], ['WR Asparagus', 'IFCO 410']],
-      ['DNB', [2], [1], [], [108, 200, 128, '+++', 142, nil, 202, '080123']],
-      ['OLD', [3], [nil, 5000169073629], [5000169048726], [nil, '085486'], [12], [28], [], [], [], ['WR Fine Asparagus']],
-      ['DNB', [3], [1], [], [108, 225, 128, 'THAI/peru', 142, nil, 202, '070123']],
-      ['OTR', [3]],
-      ['MTR', [12]],
-      ['MHD', [5], ['ORDTLR', 9]],
-      ['OFT', [3]],
-      ['MTR', [3]],
-      ['END', [5]]
+      ["STX", ["ANA", 1], [5000169000001, "DAVEY PLC"], [5060073022052, "Blackwood Limited"], [230102, "050903"],
+       [3800], [], ["ORDHDR"]],
+      ["MHD", [1], ["ORDHDR", 9]],
+      ["TYP", ["0430"], ["NEW-ORDERS"]],
+      ["SDT", [5060073022052, "005096"], ["BLACKWOOD LTD"]],
+      ["CDT", [5000169000001, "WINDRAKER LTD"]],
+      ["FIL", [3800], [1], [230102]],
+      ["MTR", [14]],
+      ["MHD", [4], ["ORDERS", 9]],
+      ["CLO", [nil, 777, "BLACKWOOD D"]],
+      ["ORD", ["B1102300", nil, 230102], [], ["N"]],
+      ["DIN", [230103], [], [], ["PM"]],
+      ["OLD", [1], [nil, 5000169475119], [5000169847442], [nil, "047836"], [12], [68], [], [], [],
+       ["WR TStem Broccoli Spears"]],
+      ["DNB", [1], [1], [], [nil, nil, 128, "KENYA/JOR/UK", 142, nil, 202, "060123"]],
+      ["OLD", [2], [nil, 5000169073643], [5000169159491], [nil, "085482"], [16], [15], [], [], [],
+       ["WR Asparagus", "IFCO 410"]],
+      ["DNB", [2], [1], [], [108, 200, 128, "+++", 142, nil, 202, "080123"]],
+      ["OLD", [3], [nil, 5000169073629], [5000169048726], [nil, "085486"], [12], [28], [], [], [],
+       ["WR Fine Asparagus"]],
+      ["DNB", [3], [1], [], [108, 225, 128, "THAI/peru", 142, nil, 202, "070123"]],
+      ["OTR", [3]],
+      ["MTR", [12]],
+      ["MHD", [5], ["ORDTLR", 9]],
+      ["OFT", [3]],
+      ["MTR", [3]],
+      ["END", [5]]
     ]
 
     expect(result).to eq(expected)

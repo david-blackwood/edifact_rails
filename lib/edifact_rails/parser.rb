@@ -42,7 +42,8 @@ module EdifactRails
     private
 
     def set_special_characters(
-      component_data_element_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
+      component_data_element_seperator =
+        EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
       data_element_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:data_element_seperator],
       escape_character = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:escape_character],
       segment_seperator = EdifactRails::Parser::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
