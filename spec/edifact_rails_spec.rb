@@ -158,8 +158,8 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it 'returns default edifact special characters' do
-    result = described_class.una_special_characters('')
+  it "returns default edifact special characters" do
+    result = described_class.una_special_characters("")
     expected = {
       component_data_element_seperator: ":",
       data_element_seperator: "+",
@@ -171,7 +171,7 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it 'returns altered edifact special characters' do
+  it "returns altered edifact special characters" do
     result = described_class.una_special_characters('UNA!^,\ ~')
     expected = {
       component_data_element_seperator: "!",
@@ -184,8 +184,8 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
-  it 'returns different altered edifact special characters' do
-    result = described_class.una_special_characters('UNA012345')
+  it "returns different altered edifact special characters" do
+    result = described_class.una_special_characters("UNA012345")
     expected = {
       component_data_element_seperator: "0",
       data_element_seperator: "1",

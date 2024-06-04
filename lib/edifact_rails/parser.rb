@@ -136,7 +136,8 @@ module EdifactRails
     # Split the data elements into component data elements, and treat them
     def parse_data_element(element)
       # Split data element into components
-      components = element.split(/(?<!#{Regexp.quote(@escape_character)})#{Regexp.quote(@component_data_element_seperator)}/)
+      components =
+        element.split(/(?<!#{Regexp.quote(@escape_character)})#{Regexp.quote(@component_data_element_seperator)}/)
 
       components.map { |component| treat_component(component) }
     end
