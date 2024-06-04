@@ -15,4 +15,9 @@
 ## 1.2.0 (31/05/2024)
 
 * Added support for UNA segments. Special characters different from the defaults can now be used.
-* Added una_special_characters method that returns just the special characters.
+* Added `#una_special_characters` method that returns just the special characters.
+
+## 1.2.1 (4/06/2024)
+
+* `#una_special_characters` method now also returns decimal notation character, default `.`.
+* `#una_special_characters` method can now take no arguments, and will return the default special characters if so.
