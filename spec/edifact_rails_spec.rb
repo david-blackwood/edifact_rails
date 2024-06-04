@@ -163,6 +163,7 @@ RSpec.describe EdifactRails do
     expected = {
       component_data_element_seperator: ":",
       data_element_seperator: "+",
+      decimal_notation: ".",
       escape_character: "?",
       segment_seperator: "'"
     }
@@ -171,10 +172,11 @@ RSpec.describe EdifactRails do
   end
 
   it 'returns altered edifact special characters' do
-    result = described_class.una_special_characters('UNA!^.\ ~')
+    result = described_class.una_special_characters('UNA!^,\ ~')
     expected = {
       component_data_element_seperator: "!",
       data_element_seperator: "^",
+      decimal_notation: ",",
       escape_character: "\\",
       segment_seperator: "~"
     }
@@ -187,6 +189,7 @@ RSpec.describe EdifactRails do
     expected = {
       component_data_element_seperator: "0",
       data_element_seperator: "1",
+      decimal_notation: "2",
       escape_character: "3",
       segment_seperator: "5"
     }

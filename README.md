@@ -54,6 +54,7 @@ una_special_characters = EdifactRails.una_special_characters(your_string_input)
 {
   component_data_element_seperator: ":",
   data_element_seperator: "+",
+  decimal_notation: ".",
   escape_character: "?",
   segment_seperator: "'"
 }

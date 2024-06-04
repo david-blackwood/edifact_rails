@@ -20,7 +20,7 @@ module EdifactRails
       string = treat_input(string)
 
       # Split the input string into segments
-      segments = string.split(/(?<!#{@escape_char_rx})#{@segment_separator_rx}/)
+      segments = string.split(/(?<!#{Regexp.quote(@escape_character)})#{Regexp.quote(@segment_seperator)}/)
 
       # Detect if the input is a tradacoms file
       @is_tradacoms = segments.map { |s| s[3] }.uniq == ["="]
@@ -40,6 +40,7 @@ module EdifactRails
       {
         component_data_element_seperator: @component_data_element_seperator,
         data_element_seperator: @data_element_seperator,
+        decimal_notation: @decimal_notation,
         escape_character: @escape_character,
         segment_seperator: @segment_seperator
       }
@@ -51,20 +52,16 @@ module EdifactRails
       component_data_element_seperator =
         EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:component_data_element_seperator],
       data_element_seperator = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:data_element_seperator],
+      decimal_notation = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:decimal_notation],
       escape_character = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:escape_character],
       segment_seperator = EdifactRails::DEFAULT_SPECIAL_CHARACTERS[:segment_seperator]
     )
       # Set the special characters
       @component_data_element_seperator = component_data_element_seperator
       @data_element_seperator = data_element_seperator
+      @decimal_notation = decimal_notation
       @escape_character = escape_character
       @segment_seperator = segment_seperator
-
-      # Escape the special characters for use in regex later on
-      @component_data_element_separator_rx = Regexp.quote(@component_data_element_seperator)
-      @data_element_separator_rx = Regexp.quote(@data_element_seperator)
-      @escape_char_rx = Regexp.quote(@escape_character)
-      @segment_separator_rx = Regexp.quote(@segment_seperator)
     end
 
     def detect_special_characters(string)
@@ -82,7 +79,7 @@ module EdifactRails
       # 4. Release character (aka escape character)
       # 5. Reserved for future use, so always a space for now
       # 6. Segment terminator
-      set_special_characters(string[3], string[4], string[6], string[8])
+      set_special_characters(string[3], string[4], string[5], string[6], string[8])
     end
 
     def treat_input(string)
@@ -112,7 +109,10 @@ module EdifactRails
       #
       # "LIN+even????+123" => '+' is not escaped, gsub'ed => "even???? +123" => parsed => ['LIN', ['even??'], [123]]
       # "LIN+odd???+123" => '+' is escaped, not gsub'ed => "odd???+123" => parsed => ['LIN', ['odd?+123']]
-      string.gsub(/(?<!#{@escape_char_rx})((#{@escape_char_rx}{2})+)([#{other_specials_rx}])/, '\1 \3')
+      string.gsub(
+        /(?<!#{Regexp.quote(@escape_character)})((#{Regexp.quote(@escape_character)}{2})+)([#{other_specials_rx}])/,
+        '\1 \3'
+      )
     end
 
     # Split the segment into data elements, take the first as the tag, then parse the rest
@@ -123,7 +123,7 @@ module EdifactRails
       segment[3] = @data_element_seperator if @is_tradacoms && segment.length >= 4
 
       # Segments are made up of data elements
-      data_elements = segment.split(/(?<!#{@escape_char_rx})#{@data_element_separator_rx}/)
+      data_elements = segment.split(/(?<!#{Regexp.quote(@escape_character)})#{Regexp.quote(@data_element_seperator)}/)
 
       # The first element is the tag, pop it off
       parsed_segment = []
@@ -136,7 +136,7 @@ module EdifactRails
     # Split the data elements into component data elements, and treat them
     def parse_data_element(element)
       # Split data element into components
-      components = element.split(/(?<!#{@escape_char_rx})#{@component_data_element_separator_rx}/)
+      components = element.split(/(?<!#{Regexp.quote(@escape_character)})#{Regexp.quote(@component_data_element_seperator)}/)
 
       components.map { |component| treat_component(component) }
     end
@@ -156,7 +156,7 @@ module EdifactRails
 
       # If the component has escaped characters in it, remove the escape character and return the character as is
       # "?+" -> "+", "??" -> "?"
-      component.gsub!(/#{@escape_char_rx}([#{Regexp.quote(all_special_characters_string)}])/, '\1')
+      component.gsub!(/#{Regexp.quote(@escape_character)}([#{Regexp.quote(all_special_characters_string)}])/, '\1')
 
       # Convert empty strings to nils
       component = nil if component.empty?

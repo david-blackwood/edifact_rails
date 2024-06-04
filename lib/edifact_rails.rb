@@ -6,6 +6,7 @@ module EdifactRails
   DEFAULT_SPECIAL_CHARACTERS = {
     component_data_element_seperator: ":",
     data_element_seperator: "+",
+    decimal_notation: ".",
     escape_character: "?",
     segment_seperator: "'"
   }.freeze
