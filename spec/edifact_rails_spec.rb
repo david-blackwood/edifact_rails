@@ -159,7 +159,7 @@ RSpec.describe EdifactRails do
   end
 
   it "returns default edifact special characters" do
-    result = described_class.una_special_characters("")
+    result = described_class.una_special_characters
     expected = {
       component_data_element_seperator: ":",
       data_element_seperator: "+",
