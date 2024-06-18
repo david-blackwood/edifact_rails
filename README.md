@@ -1,10 +1,10 @@
 # EdifactRails
 
-This gem parses EDIFACT or TRADACOMS input, and converts it into a ruby array structure for whatever further processing or validation you desire.
+This gem parses EDIFACT, TRADACOMS, or ANSIX12 input, and converts it into a ruby array structure for whatever further processing or validation you desire.
 
 It does not handle validation itself.
 
-This gem is heavily inspired by and attempts to output similar results as [edifact_parser](https://github.com/pvdvreede/edifact_parser)
+This gem is heavily inspired by [edifact_parser](https://github.com/pvdvreede/edifact_parser)
 
 ## Requirements
 
@@ -20,7 +20,7 @@ This gem has been tested on the following ruby versions:
 In your `Gemfile`:
 
 ```ruby
-gem 'edifact_rails', '~> 1.2'
+gem 'edifact_rails', '~> 2.0.0'
 ```
 
 Otherwise:
@@ -37,20 +37,20 @@ If you don't have the gem in your `Gemfile`, you will need to:
 require 'edifact_rails'
 ```
 
-You can pass either the path to your EDIFACT (or TRADACOMS) file, or a document (or snippet) as a string:
+You can parse a string input with `#parse`, or a file with `#parse_file`
+
+```ruby
+ruby_array = EdifactRails.parse("UNB+UNOA:3+TESTPLACE:1+DEP1:1+20051107:1159+6002'")
+```
 
 ```ruby
 ruby_array = EdifactRails.parse_file("your/file/path")
 ```
 
+You can return the special characters of your input with `#special_characters`.
 ```ruby
-ruby_array = EdifactRails.parse("LIN+1+1+0764569104:IB'QTY+1:25'")
-```
-
-You can pull just the special characters from the UNA segment (or the defaults if no UNA segment is present):
-```ruby
-una_special_characters = EdifactRails.una_special_characters(your_string_input)
-# una_special_characters =>
+special_characters = EdifactRails.special_characters(example_edifact_input)
+# special_characters =>
 {
   component_data_element_seperator: ":",
   data_element_seperator: "+",
@@ -180,3 +180,65 @@ Will be returned as:
   ['END', [5]]
 ]
 ```
+
+### ANSIX12
+
+This ANSIX12 file:
+
+```
+ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*>~
+GS*SS*APP SENDER*APP RECEIVER*20231014*1200*0001*X*004010~
+ST*862*0001~
+BSS*05*12345*20230414*DL*20231014*20231203****ORDER1*A~
+N1*MI*SEEBURGER AG*ZZ*00000085~
+N3*EDISONSTRASSE 1~
+N4*BRETTEN**75015*DE~
+N1*SU*SUPLIER NAME*ZZ*11222333~
+N3*203 STREET NAME~
+N4*ATLANTA*GA*30309*US~
+LIN**BP*MATERIAL1*EC*ENGINEERING1*DR*001~
+UIT*EA~
+PER*SC*SEEBURGER INFO*TE*+49(7525)0~
+FST*13*C*D*20231029****DO*12345-1~
+FST*77*C*D*20231119****DO*12345-2~
+FST*68*C*D*20231203****DO*12345-3~
+SHP*01*927*011*20231014~
+REF*SI*Q5880~
+SHP*02*8557*011*20231014**20231203~
+CTT*1*5~
+SE*19*0001~
+GE*1*0001~
+IEA*1*000000001~
+```
+
+Will be returned as:
+
+```ruby
+[
+  ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"], ["00401"], ["000000001"], [1], ["P"], []],
+  ["GS", ["SS"], ["APP SENDER"], ["APP RECEIVER"], [20231014], [1200], ["0001"], ["X"], ["004010"]],
+  ["ST", [862], ["0001"]],
+  ["BSS", ["05"], [12345], [20230414], ["DL"], [20231014], [20231203], [], [], [], ["ORDER1"], ["A"]],
+  ["N1", ["MI"], ["SEEBURGER AG"], ["ZZ"], ["00000085"]],
+  ["N3", ["EDISONSTRASSE 1"]],
+  ["N4", ["BRETTEN"], [], [75015], ["DE"]],
+  ["N1", ["SU"], ["SUPLIER NAME"], ["ZZ"], [11222333]],
+  ["N3", ["203 STREET NAME"]],
+  ["N4", ["ATLANTA"], ["GA"], [30309], ["US"]],
+  ["LIN", [], ["BP"], ["MATERIAL1"], ["EC"], ["ENGINEERING1"], ["DR"], ["001"]],
+  ["UIT", ["EA"]],
+  ["PER", ["SC"], ["SEEBURGER INFO"], ["TE"], ["+49(7525)0"]],
+  ["FST", [13], ["C"], ["D"], [20231029], [], [], [], ["DO"], ["12345-1"]],
+  ["FST", [77], ["C"], ["D"], [20231119], [], [], [], ["DO"], ["12345-2"]],
+  ["FST", [68], ["C"], ["D"], [20231203], [], [], [], ["DO"], ["12345-3"]],
+  ["SHP", ["01"], [927], ["011"], [20231014]],
+  ["REF", ["SI"], ["Q5880"]],
+  ["SHP", ["02"], [8557], ["011"], [20231014], [], [20231203]],
+  ["CTT", [1], [5]],
+  ["SE", [19], ["0001"]],
+  ["GE", [1], ["0001"]],
+  ["IEA", [1], ["000000001"]]
+]
+```
+
+
