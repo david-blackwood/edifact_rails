@@ -282,7 +282,7 @@ RSpec.describe EdifactRails do
 
     expect(result).to eq(expected)
 
-    result = described_class.special_characters("ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*:\n")
+    result = described_class.special_characters("ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*:\nST*862*0001~\n")
     expected = {
       component_data_element_seperator: ":",
       data_element_seperator: "*",
