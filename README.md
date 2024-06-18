@@ -2,7 +2,7 @@
 
 This gem parses EDIFACT, TRADACOMS, or ANSIX12 input, and converts it into a ruby array structure for whatever further processing or validation you desire.
 
-It does not handle validation itself.
+This gem can also take a ruby array input, and serialize it into EDIFACT.
 
 This gem is heavily inspired by [edifact_parser](https://github.com/pvdvreede/edifact_parser)
 
@@ -20,7 +20,7 @@ This gem has been tested on the following ruby versions:
 In your `Gemfile`:
 
 ```ruby
-gem 'edifact_rails', '~> 2.0.0'
+gem 'edifact_rails', '~> 2.1.0'
 ```
 
 Otherwise:
@@ -36,6 +36,7 @@ If you don't have the gem in your `Gemfile`, you will need to:
 ```ruby
 require 'edifact_rails'
 ```
+### Parsing
 
 You can parse a string input with `#parse`, or a file with `#parse_file`
 
@@ -46,6 +47,24 @@ ruby_array = EdifactRails.parse("UNB+UNOA:3+TESTPLACE:1+DEP1:1+20051107:1159+600
 ```ruby
 ruby_array = EdifactRails.parse_file("your/file/path")
 ```
+
+### Serialization
+
+You can convert a ruby input into EDIFACT with `#serialize`. Use the `with_service` option to insert the UNA segment.
+
+```ruby
+edifact_output = Edifact.serialize(
+  [
+    ["LIN", [1], [1], ["0764569104", "IB"]],
+    ["QTY", [1, 25]]
+  ],
+  with_service: true
+)
+# edifact_output =>
+"UNA:+.? 'LIN+1+1+0764569104:IB'QTY+1:25'"
+```
+
+### Special Characters
 
 You can return the special characters of your input with `#special_characters`.
 ```ruby
@@ -60,7 +79,7 @@ special_characters = EdifactRails.special_characters(example_edifact_input)
 }
 ```
 
-## Output
+## Parse Output
 
 ### EDIFACT
 

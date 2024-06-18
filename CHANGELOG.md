@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.0 (18/06/2024)
+
+* Added EDIFACT serialization. Contributed by [sallesma](https://github.com/sallesma)
+
 ## 2.0.0 (18/06/2024)
 
 * Added support for ANSIX12 format.
