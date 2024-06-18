@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require "edifact_rails/parser"
+require "edifact_rails/formats"
+require "edifact_rails/exceptions"
 
 module EdifactRails
   DEFAULT_SPECIAL_CHARACTERS = {
@@ -17,11 +19,11 @@ module EdifactRails
   end
 
   def self.parse_file(file_path)
-    parse(File.read(file_path).split("\n").join)
+    parse(File.read(file_path))
   end
 
-  def self.una_special_characters(string = '')
+  def self.special_characters(string = '')
     parser = EdifactRails::Parser.new
-    parser.una_special_characters(string)
+    parser.special_characters(string)
   end
 end

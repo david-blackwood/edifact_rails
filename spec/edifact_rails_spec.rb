@@ -17,8 +17,9 @@ RSpec.describe EdifactRails do
   end
 
   it "parses multiple lines" do
-    result = described_class.parse("LIN+1+1+0764569104:IB'QTY+1:25'")
+    result = described_class.parse("UNB'LIN+1+1+0764569104:IB'QTY+1:25'")
     expected = [
+      ["UNB"],
       ["LIN", [1], [1], ["0764569104", "IB"]],
       ["QTY", [1, 25]]
     ]
@@ -27,16 +28,18 @@ RSpec.describe EdifactRails do
   end
 
   it "parses escaped characters" do
-    result = described_class.parse("LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156")
+    result = described_class.parse("UNB'LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156")
     expected = [
+      ["UNB"],
       ["LIN", ["+:'?", 1], ["A Giant's tale:", "Does One + Two = Trouble??"], [156]]
     ]
     expect(result).to eq(expected)
   end
 
   it "parses empty segments" do
-    result = described_class.parse("QTY+1''QTY+2")
+    result = described_class.parse("UNB'QTY+1''QTY+2")
     expected = [
+      ["UNB"],
       ["QTY", [1]],
       [],
       ["QTY", [2]]
@@ -46,8 +49,9 @@ RSpec.describe EdifactRails do
   end
 
   it "parses empty data elements" do
-    result = described_class.parse("FTX+AFM+1++Java Server Programming'")
+    result = described_class.parse("UNB'FTX+AFM+1++Java Server Programming'")
     expected = [
+      ["UNB"],
       ["FTX", ["AFM"], [1], [], ["Java Server Programming"]]
     ]
 
@@ -55,8 +59,19 @@ RSpec.describe EdifactRails do
   end
 
   it "parses empty data components" do
-    result = described_class.parse("PDI++C:3+Y::3+F::1+A'")
+    result = described_class.parse("UNB'PDI++C:3+Y::3+F::1+A'")
     expected = [
+      ["UNB"],
+      ["PDI", [], ["C", 3], ["Y", nil, 3], ["F", nil, 1], ["A"]]
+    ]
+
+    expect(result).to eq(expected)
+  end
+
+  it "parses lines with excess spaces and carraige returns between the segments" do
+    result = described_class.parse("\n   UNB'\r\n  PDI++C:3+Y::3+F::1+A  '\r\n")
+    expected = [
+      ["UNB"],
       ["PDI", [], ["C", 3], ["Y", nil, 3], ["F", nil, 1], ["A"]]
     ]
 
@@ -158,8 +173,70 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
+  it "parses an ansix12 file" do
+    result = described_class.parse_file("#{FILES_DIR}/ansix12.edi")
+    expected = [
+      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"], ["00401"], ["000000001"], [1], ["P"], []],
+      ["GS", ["SS"], ["APP SENDER"], ["APP RECEIVER"], [20231014], [1200], ["0001"], ["X"], ["004010"]],
+      ["ST", [862], ["0001"]],
+      ["BSS", ["05"], [12345], [20230414], ["DL"], [20231014], [20231203], [], [], [], ["ORDER1"], ["A"]],
+      ["N1", ["MI"], ["SEEBURGER AG"], ["ZZ"], ["00000085"]],
+      ["N3", ["EDISONSTRASSE 1"]],
+      ["N4", ["BRETTEN"], [], [75015], ["DE"]],
+      ["N1", ["SU"], ["SUPLIER NAME"], ["ZZ"], [11222333]],
+      ["N3", ["203 STREET NAME"]],
+      ["N4", ["ATLANTA"], ["GA"], [30309], ["US"]],
+      ["LIN", [], ["BP"], ["MATERIAL1"], ["EC"], ["ENGINEERING1"], ["DR"], ["001"]],
+      ["UIT", ["EA"]],
+      ["PER", ["SC"], ["SEEBURGER INFO"], ["TE"], ["+49(7525)0"]],
+      ["FST", [13], ["C"], ["D"], [20231029], [], [], [], ["DO"], ["12345-1"]],
+      ["FST", [77], ["C"], ["D"], [20231119], [], [], [], ["DO"], ["12345-2"]],
+      ["FST", [68], ["C"], ["D"], [20231203], [], [], [], ["DO"], ["12345-3"]],
+      ["SHP", ["01"], [927], ["011"], [20231014]],
+      ["REF", ["SI"], ["Q5880"]],
+      ["SHP", ["02"], [8557], ["011"], [20231014], [], [20231203]],
+      ["CTT", [1], [5]],
+      ["SE", [19], ["0001"]],
+      ["GE", [1], ["0001"]],
+      ["IEA", [1], ["000000001"]]
+    ]
+
+    expect(result).to eq(expected)
+  end
+
+  it "parses an ansix12 file with newlines as segment seperators" do
+    result = described_class.parse_file("#{FILES_DIR}/ansix12_newlines.edi")
+    expected = [
+      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"], ["00401"], ["000000001"], [1], ["P"], []],
+      ["GS", ["SS"], ["APP SENDER"], ["APP RECEIVER"], [20231014], [1200], ["0001"], ["X"], ["004010"]],
+      ["ST", [862], ["0001"]],
+      ["BSS", ["05"], [12345], [20230414], ["DL"], [20231014], [20231203], [], [], [], ["ORDER1"], ["A"]],
+      ["N1", ["MI"], ["SEEBURGER AG"], ["ZZ"], ["00000085"]],
+      ["N3", ["EDISONSTRASSE 1"]],
+      ["N4", ["BRETTEN"], [], [75015], ["DE"]],
+      ["N1", ["SU"], ["SUPLIER NAME"], ["ZZ"], [11222333]],
+      ["N3", ["203 STREET NAME"]],
+      ["N4", ["ATLANTA"], ["GA"], [30309], ["US"]],
+      ["LIN", [], ["BP"], ["MATERIAL1"], ["EC"], ["ENGINEERING1"], ["DR"], ["001"]],
+      ["UIT", ["EA"]],
+      ["PER", ["SC"], ["SEEBURGER INFO"], ["TE"], ["+49(7525)0"]],
+      ["FST", [13], ["C"], ["D"], [20231029], [], [], [], ["DO"], ["12345-1"]],
+      ["FST", [77], ["C"], ["D"], [20231119], [], [], [], ["DO"], ["12345-2"]],
+      ["FST", [68], ["C"], ["D"], [20231203], [], [], [], ["DO"], ["12345-3"]],
+      ["SHP", ["01"], [927], ["011"], [20231014]],
+      ["REF", ["SI"], ["Q5880"]],
+      ["SHP", ["02"], [8557], ["011"], [20231014], [], [20231203]],
+      ["CTT", [1], [5]],
+      ["SE", [19], ["0001"]],
+      ["GE", [1], ["0001"]],
+      ["IEA", [1], ["000000001"]]
+    ]
+
+    expect(result).to eq(expected)
+  end
+
   it "returns default edifact special characters" do
-    result = described_class.una_special_characters
+    result = described_class.special_characters
     expected = {
       component_data_element_seperator: ":",
       data_element_seperator: "+",
@@ -172,7 +249,7 @@ RSpec.describe EdifactRails do
   end
 
   it "returns altered edifact special characters" do
-    result = described_class.una_special_characters('UNA!^,\ ~')
+    result = described_class.special_characters('UNA!^,\ ~')
     expected = {
       component_data_element_seperator: "!",
       data_element_seperator: "^",
@@ -182,10 +259,8 @@ RSpec.describe EdifactRails do
     }
 
     expect(result).to eq(expected)
-  end
 
-  it "returns different altered edifact special characters" do
-    result = described_class.una_special_characters("UNA012345")
+    result = described_class.special_characters("UNA012345")
     expected = {
       component_data_element_seperator: "0",
       data_element_seperator: "1",
@@ -195,5 +270,32 @@ RSpec.describe EdifactRails do
     }
 
     expect(result).to eq(expected)
+  end
+
+  it "returns ansix12 special characters" do
+    result = described_class.special_characters('ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*>~')
+    expected = {
+      component_data_element_seperator: ">",
+      data_element_seperator: "*",
+      segment_seperator: "~"
+    }
+
+    expect(result).to eq(expected)
+
+    result = described_class.special_characters("ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*:\n")
+    expected = {
+      component_data_element_seperator: ":",
+      data_element_seperator: "*",
+      segment_seperator: "\n"
+    }
+
+    expect(result).to eq(expected)
+  end
+
+  it "raises an error when the format is not recognized" do
+    expect { described_class.parse("Hello there") }.to raise_error(EdifactRails::UnrecognizedFormat)
+    expect { described_class.parse("UNG") }.to raise_error(EdifactRails::UnrecognizedFormat)
+    expect { described_class.special_characters("1234567890") }.to raise_error(EdifactRails::UnrecognizedFormat)
+    expect { described_class.special_characters("!UNA") }.to raise_error(EdifactRails::UnrecognizedFormat)
   end
 end
