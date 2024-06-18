@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 module EdifactRails
   class Formats
-    EDIFACT = 'EDIFACT'.freeze
-    TRADACOMS = 'TRADACOMS'.freeze
-    ANSIX12 = 'ANSIX12'.freeze
+    EDIFACT = "EDIFACT"
+    TRADACOMS = "TRADACOMS"
+    ANSIX12 = "ANSIX12"
   end
 end

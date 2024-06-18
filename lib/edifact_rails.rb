@@ -22,7 +22,7 @@ module EdifactRails
     parse(File.read(file_path))
   end
 
-  def self.special_characters(string = '')
+  def self.special_characters(string = "")
     parser = EdifactRails::Parser.new
     parser.special_characters(string)
   end

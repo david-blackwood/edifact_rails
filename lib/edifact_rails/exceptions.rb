@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EdifactRails
   class UnrecognizedFormat < StandardError
     def initialize

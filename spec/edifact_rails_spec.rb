@@ -176,7 +176,8 @@ RSpec.describe EdifactRails do
   it "parses an ansix12 file" do
     result = described_class.parse_file("#{FILES_DIR}/ansix12.edi")
     expected = [
-      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"], ["00401"], ["000000001"], [1], ["P"], []],
+      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"],
+       ["00401"], ["000000001"], [1], ["P"], []],
       ["GS", ["SS"], ["APP SENDER"], ["APP RECEIVER"], [20231014], [1200], ["0001"], ["X"], ["004010"]],
       ["ST", [862], ["0001"]],
       ["BSS", ["05"], [12345], [20230414], ["DL"], [20231014], [20231203], [], [], [], ["ORDER1"], ["A"]],
@@ -207,7 +208,8 @@ RSpec.describe EdifactRails do
   it "parses an ansix12 file with newlines as segment seperators" do
     result = described_class.parse_file("#{FILES_DIR}/ansix12_newlines.edi")
     expected = [
-      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"], ["00401"], ["000000001"], [1], ["P"], []],
+      ["ISA", ["00"], [nil], ["00"], [nil], ["01"], ["SENDER"], ["01"], ["RECEIVER"], [231014], [1200], ["U"],
+       ["00401"], ["000000001"], [1], ["P"], []],
       ["GS", ["SS"], ["APP SENDER"], ["APP RECEIVER"], [20231014], [1200], ["0001"], ["X"], ["004010"]],
       ["ST", [862], ["0001"]],
       ["BSS", ["05"], [12345], [20230414], ["DL"], [20231014], [20231203], [], [], [], ["ORDER1"], ["A"]],
@@ -273,7 +275,7 @@ RSpec.describe EdifactRails do
   end
 
   it "returns ansix12 special characters" do
-    result = described_class.special_characters('ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*>~')
+    result = described_class.special_characters("ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*>~")
     expected = {
       component_data_element_seperator: ">",
       data_element_seperator: "*",

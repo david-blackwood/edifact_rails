@@ -11,7 +11,7 @@ module EdifactRails
     # Treat the input, split the input string into segments, parse those segments
     def parse(string)
       # Remove all carraige returns, and leading and trailing whitespace
-      string = string.gsub(/\r/, '').gsub(/^\s*(.*)\s*$/, '\1')
+      string = string.delete("\r").gsub(/^\s*(.*)\s*$/, '\1')
 
       @edi_format = detect_edi_format(string)
 
@@ -39,11 +39,11 @@ module EdifactRails
     end
 
     # Given an input string, return the special characters as defined by the UNA segment
-    def special_characters(string = '')
+    def special_characters(string = "")
       # If no string is passed, return default edifact characters
-      return EdifactRails::DEFAULT_SPECIAL_CHARACTERS if string.length == 0
+      return EdifactRails::DEFAULT_SPECIAL_CHARACTERS if string.empty?
 
-      string = string.gsub(/\r/, '').gsub(/^\s*(.*)\s*$/, '\1')
+      string = string.delete("\r").gsub(/^\s*(.*)\s*$/, '\1')
       @edi_format = detect_edi_format(string)
       detect_special_characters(string)
 
@@ -54,11 +54,11 @@ module EdifactRails
 
     def detect_edi_format(string)
       case string[0..2]
-      when 'UNA', 'UNB'
+      when "UNA", "UNB"
         EdifactRails::Formats::EDIFACT
-      when 'STX'
+      when "STX"
         EdifactRails::Formats::TRADACOMS
-      when 'ISA'
+      when "ISA"
         EdifactRails::Formats::ANSIX12
       else
         raise EdifactRails::UnrecognizedFormat
@@ -112,10 +112,10 @@ module EdifactRails
       @special_characters = EdifactRails::DEFAULT_SPECIAL_CHARACTERS.merge(args)
 
       # ANSIX12 files have no escape character or decimal notation character§
-      if @edi_format == EdifactRails::Formats::ANSIX12
-        @special_characters.delete(:escape_character)
-        @special_characters.delete(:decimal_notation)
-      end
+      return unless @edi_format == EdifactRails::Formats::ANSIX12
+
+      @special_characters.delete(:escape_character)
+      @special_characters.delete(:decimal_notation)
     end
 
     def handle_duplicate_escape_characters(string)
@@ -153,8 +153,8 @@ module EdifactRails
 
     # Split the segment into data elements, take the first as the tag, then parse the rest
     def parse_segment(segment)
-      segment.chomp('')
-      segment.gsub! /^\s*(.*)\s*/, '\1'
+      segment.chomp("")
+      segment.gsub!(/^\s*(.*)\s*/, '\1')
 
       # If the input is a tradacoms file, the segment tag will be proceeded by '=' instead of '+'
       # 'QTY=1+A:B' instead of 'QTY+1+A:B'
@@ -208,7 +208,9 @@ module EdifactRails
       unless @edi_format == EdifactRails::Formats::ANSIX12
         # If the component has escaped characters in it, remove the escape character and return the character as is
         # "?+" -> "+", "??" -> "?"
-        component.gsub!(/#{Regexp.quote(@special_characters[:escape_character])}([#{Regexp.quote(all_special_characters_string)}])/, '\1')
+        component.gsub!(
+          /#{Regexp.quote(@special_characters[:escape_character])}([#{Regexp.quote(all_special_characters_string)}])/, '\1'
+        )
       end
 
       # Convert empty strings to nils
