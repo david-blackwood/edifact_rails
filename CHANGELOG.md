@@ -21,3 +21,13 @@
 
 * `#una_special_characters` method now also returns decimal notation character, default `.`.
 * `#una_special_characters` method can now take no arguments, and will return the default special characters if so.
+
+## 2.0 (18/06/2024)
+
+### Breaking changes:
+* `#una_special_characters` renamed to `#special_characters` (since it can now accept input of any supported format)
+* New `UnrecognizedFormat` Error will now be thrown if the format of the edi input can not be detected.
+    * In essence, input must begin now with `UNA` or `UNB` (EDIFACT), `STX` (TRADACOMS), or `ISA` (ANSIX12)
+
+### Changes:
+* Added support for ANSIX12 format.
