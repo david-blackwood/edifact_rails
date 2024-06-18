@@ -28,7 +28,8 @@ RSpec.describe EdifactRails do
   end
 
   it "parses escaped characters" do
-    result = described_class.parse("UNB'LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156")
+    result = described_class.parse("UNB'LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156'")
+
     expected = [
       ["UNB"],
       ["LIN", ["+:'?", 1], ["A Giant's tale:", "Does One + Two = Trouble??"], [156]]
@@ -37,7 +38,8 @@ RSpec.describe EdifactRails do
   end
 
   it "parses empty segments" do
-    result = described_class.parse("UNB'QTY+1''QTY+2")
+    result = described_class.parse("UNB'QTY+1''QTY+2'")
+
     expected = [
       ["UNB"],
       ["QTY", [1]],
@@ -274,6 +276,56 @@ RSpec.describe EdifactRails do
     expect(result).to eq(expected)
   end
 
+  it "serializes a single line" do
+    result = described_class.serialize(
+      [
+        ["UNB", ["IATB", 1], ["6XPPC"], ["LHPPC"], [940101, "0950"], [1]]
+      ],
+      with_service: false
+    )
+    expected = "UNB+IATB:1+6XPPC+LHPPC+940101:0950+1'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes multiple lines" do
+    result = described_class.serialize(
+      [
+        ["LIN", [1], [1], ["0764569104", "IB"]],
+        ["QTY", [1, 25]]
+      ],
+      with_service: false
+    )
+    expected = "LIN+1+1+0764569104:IB'QTY+1:25'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes multiple lines adding the service segment" do
+    result = described_class.serialize(
+      [
+        ["LIN", [1], [1], ["0764569104", "IB"]],
+        ["QTY", [1, 25]]
+      ],
+      with_service: true
+    )
+    expected = "UNA:+.? 'LIN+1+1+0764569104:IB'QTY+1:25'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes with escaped characters" do
+    result = described_class.serialize(
+      [
+        ["LIN", ["+:'?", 1], ["A Giant's tale:", "Does One + Two = Trouble??"], [156]]
+      ],
+      with_service: false
+    )
+    expected = "LIN+?+?:?'??:1+A Giant?'s tale?::Does One ?+ Two = Trouble????+156'"
+
+    expect(result).to eq(expected)
+  end
+
   it "returns ansix12 special characters" do
     result = described_class.special_characters("ISA*00*          *00*          *01*SENDER         *01*RECEIVER       *231014*1200*U*00401*000000001*1*P*>~")
     expected = {
@@ -290,6 +342,76 @@ RSpec.describe EdifactRails do
       data_element_seperator: "*",
       segment_seperator: "\n"
     }
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes empty segments" do
+    result = described_class.serialize(
+      [
+        ["QTY", [1]],
+        [],
+        ["QTY", [2]]
+      ],
+      with_service: false
+    )
+    expected = "QTY+1''QTY+2'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes empty data elements" do
+    result = described_class.serialize(
+      [
+        ["FTX", ["AFM"], [1], [], ["Java Server Programming"]]
+      ],
+      with_service: false
+    )
+    expected = "FTX+AFM+1++Java Server Programming'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes empty data components" do
+    result = described_class.serialize(
+      [
+        ["PDI", [], ["C", 3], ["Y", nil, 3], ["F", nil, 1], ["A"]]
+      ],
+      with_service: false
+    )
+    expected = "PDI++C:3+Y::3+F::1+A'"
+
+    expect(result).to eq(expected)
+  end
+
+  it "serializes to a file" do
+    result = described_class.serialize(
+      [
+        ["UNB", ["UNOA", 3], ["TESTPLACE", 1], ["DEP1", 1], [20051107, 1159], [6002]],
+        ["UNH", ["SSDD1"], ["ORDERS", "D", "03B", "UN", "EAN008"]],
+        ["BGM", [220], ["BKOD99"], [9]],
+        ["DTM", [137, 20051107, 102]],
+        ["NAD", ["BY"], [5412345000176, nil, 9]],
+        ["NAD", ["SU"], [4012345000094, nil, 9]],
+        ["LIN", [1], [1], ["0764569104", "IB"]],
+        ["QTY", [1, 25]],
+        ["FTX", ["AFM"], [1], [], ["XPath 2.0 Programmer's Reference"]],
+        ["LIN", [2], [1], ["0764569090", "IB"]],
+        ["QTY", [1, 25]],
+        ["FTX", ["AFM"], [1], [], ["XSLT 2.0 Programmer's Reference"]],
+        ["LIN", [3], [1], [1861004656, "IB"]],
+        ["QTY", [1, 16]],
+        ["FTX", ["AFM"], [1], [], ["Java Server Programming"]],
+        ["LIN", [4], [1], ["0596006756", "IB"]],
+        ["QTY", [1, 10]],
+        ["FTX", ["AFM"], [1], [], ["Enterprise Service Bus"]],
+        ["UNS", ["S"]],
+        ["CNT", [2, 4]],
+        ["UNT", [22], ["SSDD1"]],
+        ["UNZ", [1], [6002]]
+      ]
+    )
+    expected = File.read("#{FILES_DIR}/one_line.edi").chomp
 
     expect(result).to eq(expected)
   end
