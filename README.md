@@ -4,7 +4,7 @@ This gem parses EDIFACT, TRADACOMS, or ANSIX12 input, and converts it into a rub
 
 This gem can also take a ruby array input, and serialize it into EDIFACT.
 
-This gem is heavily inspired by [edifact_parser](https://github.com/pvdvreede/edifact_parser)
+This gem is heavily inspired by [edifact_parser](https://github.com/pvdvreede/edifact_parser).
 
 ## Requirements
 
@@ -53,7 +53,7 @@ ruby_array = EdifactRails.parse_file("your/file/path")
 You can convert a ruby input into EDIFACT with `#serialize`. Use the `with_service` option to insert the UNA segment.
 
 ```ruby
-edifact_output = Edifact.serialize(
+edifact_output = EdifactRails.serialize(
   [
     ["LIN", [1], [1], ["0764569104", "IB"]],
     ["QTY", [1, 25]]
